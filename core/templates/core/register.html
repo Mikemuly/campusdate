@@ -1,0 +1,122 @@
+{% extends 'core/base.html' %}
+{% block title %}Create Account{% endblock %}
+
+{% block content %}
+<div style="min-height: calc(100vh - 64px); display:flex; align-items:center; padding: 48px 0; background: linear-gradient(135deg, var(--cream) 0%, var(--rose-pale) 100%);">
+  <div class="container-sm" style="width:100%">
+
+    <div class="text-center" style="margin-bottom:32px;">
+      <div style="font-size:2.5rem; margin-bottom:12px;">💕</div>
+      <h1 style="font-family:'Playfair Display',serif; font-size:2rem; color:var(--charcoal); margin-bottom:8px;">
+        Join CampusDate
+      </h1>
+      <p class="text-muted">Find your match on campus. Free forever.</p>
+    </div>
+
+    <div class="form-card">
+      <form method="POST" novalidate>
+        {% csrf_token %}
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+          <!-- First Name -->
+          <div class="form-group">
+            <label class="form-label">First Name</label>
+            {{ form.first_name }}
+            {% for err in form.first_name.errors %}
+              <div class="form-error">⚠ {{ err }}</div>
+            {% endfor %}
+          </div>
+          <!-- Last Name -->
+          <div class="form-group">
+            <label class="form-label">Last Name</label>
+            {{ form.last_name }}
+            {% for err in form.last_name.errors %}
+              <div class="form-error">⚠ {{ err }}</div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Username -->
+        <div class="form-group">
+          <label class="form-label">Username</label>
+          {{ form.username }}
+          {% for err in form.username.errors %}
+            <div class="form-error">⚠ {{ err }}</div>
+          {% endfor %}
+          <div class="form-hint">Letters, digits, and @/./+/-/_ only.</div>
+        </div>
+
+        <!-- Email -->
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          {{ form.email }}
+          {% for err in form.email.errors %}
+            <div class="form-error">⚠ {{ err }}</div>
+          {% endfor %}
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+          <!-- Age -->
+          <div class="form-group">
+            <label class="form-label">Age</label>
+            {{ form.age }}
+            {% for err in form.age.errors %}
+              <div class="form-error">⚠ {{ err }}</div>
+            {% endfor %}
+          </div>
+          <!-- Gender -->
+          <div class="form-group">
+            <label class="form-label">Gender</label>
+            {{ form.gender }}
+            {% for err in form.gender.errors %}
+              <div class="form-error">⚠ {{ err }}</div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Campus -->
+        <div class="form-group">
+          <label class="form-label">Your Campus / University</label>
+          {{ form.campus }}
+          {% for err in form.campus.errors %}
+            <div class="form-error">⚠ {{ err }}</div>
+          {% endfor %}
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          {{ form.password1 }}
+          {% for err in form.password1.errors %}
+            <div class="form-error">⚠ {{ err }}</div>
+          {% endfor %}
+        </div>
+        <div class="form-group">
+          <label class="form-label">Confirm Password</label>
+          {{ form.password2 }}
+          {% for err in form.password2.errors %}
+            <div class="form-error">⚠ {{ err }}</div>
+          {% endfor %}
+        </div>
+
+        <!-- Non-field errors -->
+        {% if form.non_field_errors %}
+          <div class="form-error" style="margin-bottom:16px; font-size:0.9rem;">
+            {% for err in form.non_field_errors %}⚠ {{ err }}<br>{% endfor %}
+          </div>
+        {% endif %}
+
+        <button type="submit" class="btn btn-primary" style="width:100%; margin-top:8px;">
+          Create My Account 🚀
+        </button>
+      </form>
+
+      <div class="divider">Already have an account?</div>
+      <a href="{% url 'login' %}" class="btn btn-outline" style="width:100%; text-align:center;">
+        Sign In
+      </a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends 'core/base.html' %}
+{% block title %}Your Matches{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top:48px; padding-bottom:60px;">
+
+  <div class="page-header">
+    <h1 class="page-title">💌 Your Matches</h1>
+    <p class="page-subtitle">
+      {% if match_data %}
+        You have {{ match_data|length }} match{{ match_data|length|pluralize }}. Start a conversation!
+      {% else %}
+        No matches yet — keep liking profiles!
+      {% endif %}
+    </p>
+  </div>
+
+  {% if match_data %}
+    <div class="matches-grid">
+      {% for item in match_data %}
+        <a href="{% url 'chat' item.match.pk %}"
+           class="match-card {% if item.unread_count %}has-unread{% endif %}">
+
+          <!-- Avatar -->
+          {% if item.other_user.profile.profile_picture %}
+            <img src="{{ item.other_user.profile.profile_picture.url }}"
+                 alt="{{ item.other_user.get_full_name }}"
+                 class="match-avatar">
+          {% else %}
+            <div class="match-avatar-placeholder">
+              {% if item.other_user.profile.gender == 'M' %}👨‍🎓{% elif item.other_user.profile.gender == 'F' %}👩‍🎓{% else %}🧑‍🎓{% endif %}
+            </div>
+          {% endif %}
+
+          <!-- Info -->
+          <div class="match-info">
+            <div class="match-name">
+              {{ item.other_user.get_full_name|default:item.other_user.username }}
+              {% if item.unread_count %}
+                <span class="badge-count">{{ item.unread_count }}</span>
+              {% endif %}
+            </div>
+            <div class="match-preview">
+              {% if item.last_message %}
+                {% if item.last_message.sender == request.user %}You: {% endif %}
+                {{ item.last_message.content|truncatechars:40 }}
+              {% else %}
+                💕 New match! Say hello...
+              {% endif %}
+            </div>
+            {% if item.other_user.profile.campus %}
+              <div style="font-size:0.75rem; color:var(--rose); margin-top:4px;">
+                🎓 {{ item.other_user.profile.campus.name }}
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Time -->
+          <div class="match-time">
+            {% if item.last_message %}
+              {{ item.last_message.created_at|timesince|truncatewords:2 }} ago
+            {% else %}
+              {{ item.match.created_at|date:"M d" }}
+            {% endif %}
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+
+  {% else %}
+    <div class="empty-state">
+      <div class="empty-state-icon">💔</div>
+      <h3>No Matches Yet</h3>
+      <p>
+        Start liking profiles on the Discover page.
+        When someone likes you back, it's a match!
+      </p>
+      <a href="{% url 'dashboard' %}" class="btn btn-primary">Discover People</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

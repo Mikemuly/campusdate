@@ -1,0 +1,117 @@
+{% extends 'core/base.html' %}
+{% block title %}Chat with {{ other_user.first_name }}{% endblock %}
+
+{% block content %}
+<!-- Pass match ID to JavaScript via data attribute -->
+<div data-match-id="{{ match.pk }}">
+  <!-- Redefine body with match id for JS -->
+</div>
+
+<div class="chat-layout" style="height:calc(100vh - 64px);">
+
+  <!-- ── Sidebar: all matches ───────────────── -->
+  <aside class="chat-sidebar">
+    <div class="chat-sidebar-header">💌 Messages</div>
+
+    {% with user_matches=request.user.matches_as_user1.all|add:request.user.matches_as_user2.all %}
+      {% comment %}We load matches via a separate query in the template for the sidebar{% endcomment %}
+    {% endwith %}
+
+    <!-- We'll just show a link back to all matches -->
+    <a href="{% url 'matches' %}" class="chat-sidebar-item" style="background:var(--rose-pale); color:var(--rose);">
+      ← All Matches
+    </a>
+
+    <!-- Current conversation highlighted -->
+    <div class="chat-sidebar-item active">
+      {% if other_user.profile.profile_picture %}
+        <img src="{{ other_user.profile.profile_picture.url }}"
+             alt="{{ other_user.first_name }}" class="match-avatar" style="width:44px;height:44px;">
+      {% else %}
+        <div class="match-avatar-placeholder" style="width:44px;height:44px;font-size:1.2rem;">🧑‍🎓</div>
+      {% endif %}
+      <div>
+        <div style="font-weight:700;font-size:0.95rem;">{{ other_user.get_full_name|default:other_user.username }}</div>
+        {% if other_user.profile.campus %}
+          <div style="font-size:0.75rem;color:var(--muted);">{{ other_user.profile.campus.name }}</div>
+        {% endif %}
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── Main Chat Area ─────────────────────── -->
+  <div class="chat-main">
+
+    <!-- Chat Header -->
+    <div class="chat-header">
+      <a href="{% url 'profile' other_user.username %}">
+        {% if other_user.profile.profile_picture %}
+          <img src="{{ other_user.profile.profile_picture.url }}"
+               alt="{{ other_user.first_name }}"
+               class="match-avatar" style="width:44px;height:44px;">
+        {% else %}
+          <div class="match-avatar-placeholder" style="width:44px;height:44px;font-size:1.2rem;">🧑‍🎓</div>
+        {% endif %}
+      </a>
+      <div>
+        <div class="chat-header-name">
+          <a href="{% url 'profile' other_user.username %}" style="color:var(--charcoal);text-decoration:none;">
+            {{ other_user.get_full_name|default:other_user.username }}
+          </a>
+        </div>
+        {% if other_user.profile.campus %}
+          <div style="font-size:0.8rem;color:var(--muted);">🎓 {{ other_user.profile.campus.name }}</div>
+        {% endif %}
+      </div>
+      <!-- Profile link -->
+      <a href="{% url 'profile' other_user.username %}" class="btn btn-ghost btn-sm"
+         style="margin-left:auto;">View Profile</a>
+    </div>
+
+    <!-- Messages -->
+    <div class="chat-messages" id="chatMessages">
+      {% if not chat_messages %}
+        <div style="text-align:center; padding:40px; color:var(--muted);">
+          <div style="font-size:2.5rem; margin-bottom:12px;">💕</div>
+          <p style="font-weight:600; color:var(--charcoal); margin-bottom:4px;">You matched!</p>
+          <p>Be the first to say hello to {{ other_user.first_name }}.</p>
+        </div>
+      {% endif %}
+
+      {% for msg in chat_messages %}
+        <div class="message-bubble-wrap {% if msg.sender == request.user %}mine{% endif %}"
+             data-msg-id="{{ msg.pk }}">
+          <div class="message-bubble {% if msg.sender == request.user %}mine{% else %}theirs{% endif %}">
+            {{ msg.content }}
+          </div>
+          <div class="message-time">{{ msg.created_at|date:"H:i" }}</div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- Input Area -->
+    <div class="chat-input-area">
+      <form method="POST" action="{% url 'chat' match.pk %}"
+            id="chatForm" style="display:contents;">
+        {% csrf_token %}
+        <textarea name="content" id="messageInput"
+                  class="message-input"
+                  placeholder="Type a message... (Ctrl+Enter to send)"
+                  rows="1" maxlength="1000" required></textarea>
+        <button type="submit" class="btn btn-primary" style="flex-shrink:0; height:48px;">
+          Send ➤
+        </button>
+      </form>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Set match ID on body for the chat polling script
+  document.body.dataset.matchId = "{{ match.pk }}";
+</script>
+{% endblock %}

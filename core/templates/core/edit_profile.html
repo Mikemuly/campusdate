@@ -1,0 +1,131 @@
+{% extends 'core/base.html' %}
+{% block title %}Edit Profile{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width:720px; padding-top:48px; padding-bottom:60px;">
+
+  <div style="margin-bottom:32px;">
+    <h1 class="page-title">Edit Your Profile</h1>
+    <p class="page-subtitle">Make a great first impression.</p>
+  </div>
+
+  <form method="POST" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+
+    <!-- Profile Picture -->
+    <div class="form-card" style="margin-bottom:24px;">
+      <h2 style="font-family:'Playfair Display',serif; font-size:1.2rem; margin-bottom:20px;">
+        📸 Profile Photo
+      </h2>
+      <div style="display:flex; align-items:center; gap:24px; flex-wrap:wrap;">
+        {% if user.profile.profile_picture %}
+          <img id="picPreview" src="{{ user.profile.profile_picture.url }}"
+               alt="Current photo"
+               style="width:100px; height:100px; border-radius:50%; object-fit:cover; border:3px solid var(--rose);">
+        {% else %}
+          <img id="picPreview"
+               src="/static/core/img/default_avatar.svg"
+               alt="No photo"
+               style="width:100px; height:100px; border-radius:50%; border:3px solid var(--border); display:block;">
+        {% endif %}
+        <div style="flex:1;">
+          {{ profile_form.profile_picture }}
+          {% for err in profile_form.profile_picture.errors %}
+            <div class="form-error">⚠ {{ err }}</div>
+          {% endfor %}
+          <div class="form-hint">JPEG, PNG, GIF or WEBP. Max 5MB.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Personal Info -->
+    <div class="form-card" style="margin-bottom:24px;">
+      <h2 style="font-family:'Playfair Display',serif; font-size:1.2rem; margin-bottom:20px;">
+        👤 Personal Info
+      </h2>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+        <div class="form-group">
+          <label class="form-label">First Name</label>
+          {{ user_form.first_name }}
+          {% for err in user_form.first_name.errors %}
+            <div class="form-error">⚠ {{ err }}</div>
+          {% endfor %}
+        </div>
+        <div class="form-group">
+          <label class="form-label">Last Name</label>
+          {{ user_form.last_name }}
+          {% for err in user_form.last_name.errors %}
+            <div class="form-error">⚠ {{ err }}</div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        {{ user_form.email }}
+        {% for err in user_form.email.errors %}
+          <div class="form-error">⚠ {{ err }}</div>
+        {% endfor %}
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+        <div class="form-group">
+          <label class="form-label">Age</label>
+          {{ profile_form.age }}
+          {% for err in profile_form.age.errors %}
+            <div class="form-error">⚠ {{ err }}</div>
+          {% endfor %}
+        </div>
+        <div class="form-group">
+          <label class="form-label">Gender</label>
+          {{ profile_form.gender }}
+          {% for err in profile_form.gender.errors %}
+            <div class="form-error">⚠ {{ err }}</div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Campus / University</label>
+        {{ profile_form.campus }}
+        {% for err in profile_form.campus.errors %}
+          <div class="form-error">⚠ {{ err }}</div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Bio & Interests -->
+    <div class="form-card" style="margin-bottom:24px;">
+      <h2 style="font-family:'Playfair Display',serif; font-size:1.2rem; margin-bottom:20px;">
+        ✍️ About Me
+      </h2>
+
+      <div class="form-group">
+        <label class="form-label">Bio</label>
+        {{ profile_form.bio }}
+        {% for err in profile_form.bio.errors %}
+          <div class="form-error">⚠ {{ err }}</div>
+        {% endfor %}
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Interests &amp; Hobbies</label>
+        {{ profile_form.interests }}
+        {% for err in profile_form.interests.errors %}
+          <div class="form-error">⚠ {{ err }}</div>
+        {% endfor %}
+        <div class="form-hint">Comma-separated: e.g. hiking, music, coding, photography</div>
+      </div>
+    </div>
+
+    <!-- Submit -->
+    <div style="display:flex; gap:12px; align-items:center;">
+      <button type="submit" class="btn btn-primary btn-lg">
+        💾 Save Changes
+      </button>
+      <a href="{% url 'profile_self' %}" class="btn btn-ghost">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

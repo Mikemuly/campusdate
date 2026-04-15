@@ -1,0 +1,92 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}CampusDate{% endblock %} — Campus Dating</title>
+  <meta name="description" content="CampusDate — Find your match on campus">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💕</text></svg>">
+  <link rel="stylesheet" href="{% static 'core/css/style.css' %}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+  <!-- ── Navigation ──────────────────────────── -->
+  <nav class="navbar">
+    <div class="container navbar-inner">
+
+      <!-- Brand -->
+      <a href="{% url 'home' %}" class="navbar-brand">
+        💕 Campus<span>Date</span>
+      </a>
+
+      <!-- Mobile toggle -->
+      <button class="navbar-toggle" aria-label="Toggle menu">☰</button>
+
+      <!-- Nav Links -->
+      <ul class="navbar-nav">
+        {% if user.is_authenticated %}
+          <li>
+            <a href="{% url 'dashboard' %}" {% if request.resolver_match.url_name == 'dashboard' %}class="active"{% endif %}>
+              🔍 Discover
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'matches' %}" {% if request.resolver_match.url_name == 'matches' %}class="active"{% endif %}>
+              💌 Matches
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'profile_self' %}" {% if request.resolver_match.url_name == 'profile_self' %}class="active"{% endif %}>
+              {% if user.profile.profile_picture %}
+                <img src="{{ user.profile.profile_picture.url }}" alt="{{ user.username }}" class="nav-avatar">
+              {% else %}
+                👤
+              {% endif %}
+              {{ user.first_name|default:user.username }}
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'logout' %}">🚪 Logout</a>
+          </li>
+        {% else %}
+          <li><a href="{% url 'login' %}">Login</a></li>
+          <li>
+            <a href="{% url 'register' %}" class="btn btn-primary btn-sm" style="border-radius:999px">
+              Join Free
+            </a>
+          </li>
+        {% endif %}
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ── Django Messages ─────────────────────── -->
+  {% if messages %}
+    <div class="messages-container">
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags|default:'info' }}">
+          <span>{{ message }}</span>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <!-- ── Page Content ────────────────────────── -->
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- ── Footer ──────────────────────────────── -->
+  <footer class="footer">
+    <p>Made with ❤️ for students everywhere · <strong>CampusDate</strong> &copy; 2025</p>
+  </footer>
+
+  <!-- Hidden CSRF token for AJAX calls -->
+  <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+  <script src="{% static 'core/js/main.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

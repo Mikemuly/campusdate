@@ -1,0 +1,173 @@
+{% extends 'core/base.html' %}
+{% block title %}{{ target_user.get_full_name|default:target_user.username }}{% endblock %}
+
+{% block content %}
+
+<!-- Profile Hero -->
+<section class="profile-hero">
+  <div class="container">
+    <div class="profile-hero-content">
+
+      <!-- Avatar -->
+      <div class="profile-avatar-wrap">
+        {% if profile_obj.profile_picture %}
+          <img src="{{ profile_obj.profile_picture.url }}"
+               alt="{{ target_user.get_full_name }}"
+               class="profile-avatar">
+        {% else %}
+          <div class="profile-avatar-placeholder">
+            {% if profile_obj.gender == 'M' %}👨‍🎓{% elif profile_obj.gender == 'F' %}👩‍🎓{% else %}🧑‍🎓{% endif %}
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Info -->
+      <div class="profile-hero-info">
+        <h1 class="profile-hero-name">
+          {{ target_user.get_full_name|default:target_user.username }}
+        </h1>
+        <div class="profile-hero-meta">
+          {% if profile_obj.age %}<span>{{ profile_obj.age }} years old</span>{% endif %}
+          {% if profile_obj.gender %}<span>· {{ profile_obj.get_gender_display }}</span>{% endif %}
+          {% if profile_obj.campus %}
+            <span class="profile-campus-tag">🎓 {{ profile_obj.campus.name }}</span>
+          {% endif %}
+        </div>
+
+        <!-- Action Buttons -->
+        {% if is_own_profile %}
+          <a href="{% url 'edit_profile' %}" class="btn btn-primary">
+            ✏️ Edit Profile
+          </a>
+        {% else %}
+          <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:8px;">
+            <!-- Like button -->
+            <form class="like-form" method="POST"
+                  action="{% url 'like_user' target_user.pk %}"
+                  data-user-id="{{ target_user.pk }}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-primary {% if has_liked %}liked{% endif %}">
+                {% if has_liked %}❤️ Liked{% else %}🤍 Like{% endif %}
+              </button>
+            </form>
+
+            <!-- Message button if matched -->
+            {% if match %}
+              <a href="{% url 'chat' match.pk %}" class="btn btn-outline" style="color:white; border-color:rgba(255,255,255,0.4);">
+                💬 Message
+              </a>
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Profile Body -->
+<div class="container" style="padding-top:48px; padding-bottom:60px;">
+  <div style="display:grid; grid-template-columns: 2fr 1fr; gap:32px; max-width:900px;">
+
+    <!-- Left: About -->
+    <div>
+      {% if profile_obj.bio %}
+        <div class="card" style="padding:32px; margin-bottom:24px;">
+          <h2 style="font-family:'Playfair Display',serif; font-size:1.3rem; margin-bottom:16px;">
+            About Me
+          </h2>
+          <p style="color:var(--slate); line-height:1.8; white-space:pre-line;">{{ profile_obj.bio }}</p>
+        </div>
+      {% endif %}
+
+      {% if profile_obj.interests %}
+        <div class="card" style="padding:32px;">
+          <h2 style="font-family:'Playfair Display',serif; font-size:1.3rem; margin-bottom:16px;">
+            Interests & Hobbies
+          </h2>
+          <div style="display:flex; flex-wrap:wrap; gap:8px;">
+            {% for interest in profile_obj.interests.split(',') %}
+              <span style="background:var(--rose-pale); color:var(--rose); padding:6px 14px;
+                           border-radius:999px; font-size:0.88rem; font-weight:600;">
+                {{ interest|trim }}
+              </span>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+
+      {% if not profile_obj.bio and not profile_obj.interests %}
+        {% if is_own_profile %}
+          <div class="empty-state" style="padding:40px;">
+            <div class="empty-state-icon">📝</div>
+            <h3>Your Profile Looks Empty</h3>
+            <p>Add a bio and interests so others can get to know you!</p>
+            <a href="{% url 'edit_profile' %}" class="btn btn-primary">Complete Profile</a>
+          </div>
+        {% else %}
+          <div class="card" style="padding:32px; text-align:center; color:var(--muted);">
+            <p>This student hasn't added a bio yet.</p>
+          </div>
+        {% endif %}
+      {% endif %}
+    </div>
+
+    <!-- Right: Quick Info -->
+    <div>
+      <div class="card" style="padding:24px;">
+        <h3 style="font-family:'Playfair Display',serif; font-size:1.1rem; margin-bottom:16px;">
+          Quick Info
+        </h3>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          {% if profile_obj.campus %}
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span style="font-size:1.3rem;">🎓</span>
+              <div>
+                <div style="font-size:0.78rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); font-weight:600;">Campus</div>
+                <div style="font-weight:600; font-size:0.92rem; color:var(--charcoal);">{{ profile_obj.campus.name }}</div>
+              </div>
+            </div>
+          {% endif %}
+          {% if profile_obj.age %}
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span style="font-size:1.3rem;">🎂</span>
+              <div>
+                <div style="font-size:0.78rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); font-weight:600;">Age</div>
+                <div style="font-weight:600; font-size:0.92rem; color:var(--charcoal);">{{ profile_obj.age }} years</div>
+              </div>
+            </div>
+          {% endif %}
+          {% if profile_obj.gender %}
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span style="font-size:1.3rem;">✨</span>
+              <div>
+                <div style="font-size:0.78rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); font-weight:600;">Gender</div>
+                <div style="font-weight:600; font-size:0.92rem; color:var(--charcoal);">{{ profile_obj.get_gender_display }}</div>
+              </div>
+            </div>
+          {% endif %}
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span style="font-size:1.3rem;">📅</span>
+            <div>
+              <div style="font-size:0.78rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); font-weight:600;">Joined</div>
+              <div style="font-weight:600; font-size:0.92rem; color:var(--charcoal);">{{ profile_obj.created_at|date:"M Y" }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {% if not is_own_profile %}
+        {% if match %}
+          <div class="card" style="padding:24px; margin-top:16px; text-align:center; background:var(--rose-pale); border:2px solid var(--rose-light);">
+            <div style="font-size:2rem; margin-bottom:8px;">💕</div>
+            <p style="font-weight:700; color:var(--rose); font-size:0.95rem;">You're matched!</p>
+            <a href="{% url 'chat' match.pk %}" class="btn btn-primary btn-sm" style="margin-top:12px;">
+              Open Chat
+            </a>
+          </div>
+        {% endif %}
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}

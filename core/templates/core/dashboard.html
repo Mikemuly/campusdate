@@ -1,0 +1,171 @@
+{% extends 'core/base.html' %}
+{% block title %}Discover{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1 class="page-title">Discover People</h1>
+    <p class="page-subtitle">
+      {% if current_campus %}
+        Showing students from <strong>{{ current_campus.name }}</strong> by default
+      {% else %}
+        Browse all students on CampusDate
+      {% endif %}
+    </p>
+  </div>
+
+  <!-- Filter Bar -->
+  <form method="GET" action="{% url 'dashboard' %}" class="filter-bar">
+    <!-- Name search -->
+    <div class="form-group">
+      <label class="form-label">Search by Name</label>
+      <input type="text" name="q" class="form-input"
+             placeholder="Search name..." value="{{ name_search }}">
+    </div>
+
+    <!-- Campus filter -->
+    <div class="form-group">
+      <label class="form-label">Campus</label>
+      <select name="campus" class="form-input">
+        <option value="">— My Campus —</option>
+        {% for campus in all_campuses %}
+          <option value="{{ campus.id }}"
+            {% if campus_filter == campus.id|stringformat:"s" %}selected{% endif %}>
+            {{ campus.name }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <!-- Show all -->
+    <div class="form-group" style="min-width:auto;">
+      <label class="form-label" style="visibility:hidden;">All</label>
+      <div style="display:flex; gap:8px; align-items:center; height:48px;">
+        <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-size:0.9rem; color:var(--slate);">
+          <input type="checkbox" name="show_all" value="1" {% if show_all %}checked{% endif %}
+                 style="accent-color:var(--rose); width:16px; height:16px;">
+          All Campuses
+        </label>
+      </div>
+    </div>
+
+    <div class="form-group" style="min-width:auto;">
+      <label class="form-label" style="visibility:hidden;">Go</label>
+      <button type="submit" class="btn btn-primary" style="height:48px;">
+        🔍 Search
+      </button>
+    </div>
+
+    {% if name_search or campus_filter or show_all %}
+      <div class="form-group" style="min-width:auto;">
+        <label class="form-label" style="visibility:hidden;">Clear</label>
+        <a href="{% url 'dashboard' %}" class="btn btn-ghost" style="height:48px;">✕ Clear</a>
+      </div>
+    {% endif %}
+  </form>
+
+  <!-- User Grid -->
+  {% if page_obj %}
+    <div class="user-grid">
+      {% for person in page_obj %}
+        <div class="profile-card">
+          <!-- Photo -->
+          <a href="{% url 'profile' person.username %}">
+            {% if person.profile.profile_picture %}
+              <img src="{{ person.profile.profile_picture.url }}"
+                   alt="{{ person.get_full_name }}"
+                   class="profile-card-img">
+            {% else %}
+              <div class="profile-card-img-placeholder">
+                {% if person.profile.gender == 'M' %}👨‍🎓{% elif person.profile.gender == 'F' %}👩‍🎓{% else %}🧑‍🎓{% endif %}
+              </div>
+            {% endif %}
+          </a>
+
+          <!-- Info -->
+          <div class="profile-card-body">
+            <div class="profile-card-name">
+              <a href="{% url 'profile' person.username %}" style="color:inherit; text-decoration:none;">
+                {{ person.get_full_name|default:person.username }}
+              </a>
+            </div>
+            <div class="profile-card-meta">
+              {% if person.profile.age %}{{ person.profile.age }} yrs · {% endif %}
+              {{ person.profile.get_gender_display|default:"" }}
+            </div>
+            {% if person.profile.campus %}
+              <div class="profile-card-campus">🎓 {{ person.profile.campus.name }}</div>
+            {% endif %}
+            {% if person.profile.bio %}
+              <p style="font-size:0.83rem; color:var(--muted); margin-top:10px; line-height:1.5;
+                        display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">
+                {{ person.profile.bio }}
+              </p>
+            {% endif %}
+
+            <!-- Like Button -->
+            <div style="margin-top:12px;">
+              <form class="like-form" method="POST"
+                    action="{% url 'like_user' person.pk %}"
+                    data-user-id="{{ person.pk }}">
+                {% csrf_token %}
+                <button type="submit"
+                        class="btn-like {% if person.pk in liked_ids %}liked{% endif %}">
+                  {% if person.pk in liked_ids %}❤️ Liked{% else %}🤍 Like{% endif %}
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+      <nav class="pagination">
+        {% if page_obj.has_previous %}
+          <a href="?page={{ page_obj.previous_page_number }}{% if name_search %}&q={{ name_search }}{% endif %}{% if campus_filter %}&campus={{ campus_filter }}{% endif %}{% if show_all %}&show_all=1{% endif %}"
+             class="page-link">‹</a>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+          {% if page_obj.number == num %}
+            <span class="page-link current">{{ num }}</span>
+          {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <a href="?page={{ num }}{% if name_search %}&q={{ name_search }}{% endif %}{% if campus_filter %}&campus={{ campus_filter }}{% endif %}{% if show_all %}&show_all=1{% endif %}"
+               class="page-link">{{ num }}</a>
+          {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}{% if name_search %}&q={{ name_search }}{% endif %}{% if campus_filter %}&campus={{ campus_filter }}{% endif %}{% if show_all %}&show_all=1{% endif %}"
+             class="page-link">›</a>
+        {% endif %}
+      </nav>
+    {% endif %}
+
+  {% else %}
+    <div class="empty-state">
+      <div class="empty-state-icon">🔍</div>
+      <h3>No Students Found</h3>
+      <p>
+        {% if name_search %}
+          No students matching "{{ name_search }}".
+        {% elif campus_filter %}
+          No students from this campus yet.
+        {% else %}
+          Be the first from your campus! Invite your classmates.
+        {% endif %}
+      </p>
+      {% if name_search or campus_filter %}
+        <a href="{% url 'dashboard' %}" class="btn btn-primary">Browse All</a>
+      {% endif %}
+    </div>
+  {% endif %}
+
+</div>
+
+<div style="padding-bottom: 60px;"></div>
+{% endblock %}

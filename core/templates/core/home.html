@@ -1,0 +1,113 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Welcome{% endblock %}
+
+{% block content %}
+
+<!-- ── Hero Section ──────────────────────────── -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-eyebrow">🎓 Exclusively for Students</div>
+      <h1 class="hero-title">
+        Find Your Person<br>
+        <em>On Campus</em>
+      </h1>
+      <p class="hero-subtitle">
+        CampusDate connects university students with each other.
+        Browse profiles from your campus, like who catches your eye,
+        and start meaningful conversations when you match.
+      </p>
+      <div class="hero-cta">
+        <a href="{% url 'register' %}" class="btn btn-primary btn-lg">
+          Create Free Profile
+        </a>
+        <a href="{% url 'login' %}" class="btn btn-outline btn-lg" style="color:white;border-color:rgba(255,255,255,0.4)">
+          Sign In
+        </a>
+      </div>
+
+      <!-- Stats -->
+      <div class="hero-stats">
+        <div>
+          <span class="hero-stat-num">{{ campus_count }}+</span>
+          <span class="hero-stat-label">Universities</span>
+        </div>
+        <div>
+          <span class="hero-stat-num">{{ user_count }}+</span>
+          <span class="hero-stat-label">Students</span>
+        </div>
+        <div>
+          <span class="hero-stat-num">{{ match_count }}+</span>
+          <span class="hero-stat-label">Matches Made</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Features ───────────────────────────────── -->
+<section class="features">
+  <div class="container">
+    <div class="text-center">
+      <h2 class="section-title">How CampusDate Works</h2>
+      <p class="section-subtitle" style="margin:0 auto">
+        Simple, safe, and built for campus life.
+      </p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <span class="feature-icon">🎓</span>
+        <h3 class="feature-title">Campus-First</h3>
+        <p class="feature-text">
+          Browse students from your university or explore other campuses.
+          Everyone here is a verified student.
+        </p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">❤️</span>
+        <h3 class="feature-title">Like & Match</h3>
+        <p class="feature-text">
+          Like profiles that catch your attention. When the feeling's mutual,
+          you both get notified of a match!
+        </p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">💬</span>
+        <h3 class="feature-title">Chat Freely</h3>
+        <p class="feature-text">
+          Matched users can message each other in real time.
+          No spam — only people you've connected with.
+        </p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🔒</span>
+        <h3 class="feature-title">Safe & Private</h3>
+        <p class="feature-text">
+          Your data is protected. Only matched users see your contact info.
+          Block or report anyone anytime.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA Banner ─────────────────────────────── -->
+<section style="background: var(--rose); padding: 80px 0; text-align: center;">
+  <div class="container">
+    <h2 style="font-family:'Playfair Display',serif; font-size:2.2rem; color:white; margin-bottom:12px;">
+      Ready to Meet Someone Special?
+    </h2>
+    <p style="color:rgba(255,255,255,0.8); font-size:1.05rem; margin-bottom:32px;">
+      Join thousands of students already on CampusDate.
+    </p>
+    <a href="{% url 'register' %}" class="btn btn-lg"
+       style="background:white; color:var(--rose); font-weight:700;">
+      Get Started — It's Free
+    </a>
+  </div>
+</section>
+
+{% endblock %}
