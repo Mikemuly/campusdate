@@ -1,21 +1,12 @@
-"""
-Django settings for CampusDate project.
-A campus dating platform for university students.
-"""
-
 from pathlib import Path
-import os
+from decouple import config   # ← add this
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-campusdate-secret-key-change-in-production-xyz123'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ['*']
+# Reads from .env — never hardcoded
+SECRET_KEY = config('SECRET_KEY')
+DEBUG = config('DEBUG', default=False, cast=bool)
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1').split(',')
 
 # Application definition
 INSTALLED_APPS = [
