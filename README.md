@@ -1,10 +1,10 @@
-# 💕 CampusDate — Campus Dating Platform
+# CampusDate — Campus Dating Platform
 
 A full-stack Django dating website built exclusively for university students.
 
 ---
 
-## 📋 Features
+## Features
 
 | Feature | Details |
 |---|---|
@@ -19,7 +19,7 @@ A full-stack Django dating website built exclusively for university students.
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 - **Backend**: Python 3.10+ / Django 4.2
 - **Database**: SQLite (dev) — swap to PostgreSQL for production
@@ -28,7 +28,7 @@ A full-stack Django dating website built exclusively for university students.
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 - Python 3.10 or higher
@@ -77,7 +77,7 @@ python manage.py runserver
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 campusdate/
@@ -122,7 +122,7 @@ campusdate/
 
 ---
 
-## 🗄 Database Models
+## Database Models
 
 ### `Campus`
 | Field | Type | Description |
@@ -165,7 +165,7 @@ Auto-creates a `Match` on save if mutual.
 
 ---
 
-## 🔗 URL Routes
+## URL Routes
 
 | URL | View | Auth Required |
 |---|---|---|
@@ -185,7 +185,7 @@ Auto-creates a `Match` on save if mutual.
 
 ---
 
-## ⚙️ Adding More Campuses
+## Adding More Campuses
 
 Option 1: Via Django Admin
 1. Go to `/admin/`
@@ -202,7 +202,7 @@ Option 3: Edit `0002_seed_campuses.py` before running migrations.
 
 ---
 
-## 🔒 Security Notes
+## Security Notes
 
 - **Passwords** are hashed with Django's PBKDF2 (256,000 iterations by default)
 - **CSRF tokens** protect all POST forms
@@ -213,7 +213,7 @@ Option 3: Edit `0002_seed_campuses.py` before running migrations.
 
 ---
 
-## 🏭 Production Checklist
+## Production Checklist
 
 Before deploying to production:
 
@@ -241,15 +241,15 @@ DATABASES = {
 
 ---
 
-## 🧪 Sample Data / Testing
+## Sample Data / Testing
 
 Register a few accounts in different roles to test:
 1. Register User A on "University of Nairobi"
 2. Register User B on "University of Nairobi"
 3. As User A → like User B
-4. As User B → like User A → 💕 Match created!
+4. As User B → like User A → Match created!
 5. Go to Matches → open Chat → send messages
 
 ---
 
-Built with ❤️ using Django · Python · HTML/CSS/JS
+Built with using Django · Python · HTML/CSS/JS
