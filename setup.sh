@@ -6,7 +6,7 @@
 set -e
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "  💕  CampusDate Setup"
+echo "   CampusDate Setup"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 # 1. Create virtual environment
@@ -37,7 +37,7 @@ fi
 # 5. Done
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "  ✅  Setup complete!"
+echo "   Setup complete!"
 echo ""
 echo "  Start the server:"
 echo "    source venv/bin/activate"
